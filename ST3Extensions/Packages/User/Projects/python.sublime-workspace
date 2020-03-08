@@ -1,0 +1,530 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"ma",
+				"main\tmain()"
+			],
+			[
+				"pr",
+				"program_code"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "/D/program_code/python/gluon-cv-master/scripts/detection/yolo/demo_yolo.py",
+			"settings":
+			{
+				"buffer_size": 5032,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/D/program_code/python/gluon-cv-master/MANIFEST.in",
+			"settings":
+			{
+				"buffer_size": 97,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "Packages/Python/Python.sublime-build",
+	"build_system_choices":
+	[
+		[
+			[
+				[
+					"Anaconda Python Builder",
+					""
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					""
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					"Syntax Check"
+				]
+			],
+			[
+				"Anaconda Python Builder",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Packages/Python/Python.sublime-build",
+					""
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					"Syntax Check"
+				]
+			],
+			[
+				"Packages/Python/Python.sublime-build",
+				"Syntax Check"
+			]
+		]
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"i",
+				"Package Control: Install Package"
+			],
+			[
+				"reso",
+				"PackageResourceViewer: Open Resource"
+			],
+			[
+				"resor",
+				"PackageResourceViewer: Open Resource"
+			],
+			[
+				"resou",
+				"PackageResourceViewer: Open Resource"
+			],
+			[
+				"resource",
+				"PackageResourceViewer: Open Resource"
+			],
+			[
+				"r",
+				"Package Control: Remove Package"
+			],
+			[
+				"re",
+				"Package Control: Remove Package"
+			],
+			[
+				"in",
+				"Package Control: Install Package"
+			],
+			[
+				"instal",
+				"Package Control: Install Package"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"remo",
+				"Package Control: Remove Package"
+			],
+			[
+				"ins",
+				"Package Control: Install Package"
+			],
+			[
+				"anac",
+				"Anaconda: Vagrant Init"
+			],
+			[
+				"rem",
+				"Package Control: Remove Package"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			],
+			[
+				"",
+				"Install Package Control"
+			],
+			[
+				"install",
+				"Install Package Control"
+			],
+			[
+				"pack",
+				"Install Package Control"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 313.0,
+		"history":
+		[
+			"python",
+			"python --version",
+			"cd d",
+			"ls",
+			"cmd",
+			"ls"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/D/program_code/python",
+		"/D/program_code/python/gluon-cv-master",
+		"/D/program_code/python/gluon-cv-master/scripts",
+		"/D/program_code/python/gluon-cv-master/scripts/detection",
+		"/D/program_code/python/gluon-cv-master/scripts/detection/yolo",
+		"/D/program_code/python/gluon-cv-master/tests",
+		"/D/program_code/python/test",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/CTags",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/CTags/helpers",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/CTags/messages"
+	],
+	"file_history":
+	[
+		"/D/program_code/python/test/test.cpp",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/User/Package Control.sublime-settings",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/CTags/Context.sublime-menu",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/CTags/Side Bar.sublime-menu",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/CTags/ctagsplugin.py",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/CTags/Main.sublime-menu",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/CTags/ctags.py",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/CoolFormat/Default.sublime-commands",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/CoolFormat/Default.sublime-keymap",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/CoolFormat/.no-sublime-package",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/CoolFormat/Coolformat.py",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/User/Terminal.sublime-settings",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/Terminal/Terminal.sublime-settings",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/Terminal/Default (Windows).sublime-keymap",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/CTags/CTags.sublime-settings",
+		"/D/program_code/python/test/test.py",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/CoolFormat/README.md",
+		"/D/program_code/python/gluon-cv-master/scripts/detection/yolo/demo_pose.py",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/SyncedSidebarBg/SyncedSidebarBg.sublime-settings",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/CMake/CMakeCache.sublime-syntax",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/CMake/README.md",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/Package Control/Package Control.sublime-settings",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/SideBarEnhancements/Side Bar.sublime-settings",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/SyncedSidebarBg/package-metadata.json",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/SyncedSidebarBg/SyncedSidebarBg.py",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/SyncedSidebarBg/messages/install.txt",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/SyncedSidebarBg/README.md",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/Terminality/README.md",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/SideBarEnhancements/Side Bar.sublime-menu",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/Python/Python.sublime-build",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/SideBarEnhancements/Main.sublime-menu",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Installed Packages/CTags.sublime-package",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Installed Packages/Package Control.sublime-package",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Installed Packages/ProjectManager.sublime-package",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/Clang Format/Default (Windows).sublime-keymap",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/Terminality/Default (Windows).sublime-keymap",
+		"/D/program_code/python/gluon-cv-master/scripts/detection/yolo/eval_yolo.py",
+		"/Z/tmp/retinaface_lwb_wk/model/retina-symbol.prototxt",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/User/Projects/python.sublime-project",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/Debugger/.python-version",
+		"/D/work/model-0001.prototxt",
+		"/Z/tmp/retinaface_lwb_wk/model/mnet_v1_1_0.prototxt",
+		"/D/OneDrive/Desktop/retina-symbol.prototxt",
+		"/D/program_code/python/pycv/chapter3/contours.py",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/Debugger/.no-sublime-package",
+		"/D/program_code/python/gluon-cv-master/scripts/deployment/cpp-inference/src/clipp.hpp",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/User/anacoda-py35.sublime-build",
+		"/D/program_code/python/pycv/first_edition/chapter2/miscellaneous/5-CameraWindow.py",
+		"/D/program_code/python/pose/test.py",
+		"/D/program_code/python/pose/416x416.bgr",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/Anaconda/Anaconda.sublime-settings",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/User/Anaconda.sublime-settings",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/User/Preferences.sublime-settings",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/Debugger/debugger.sublime-settings",
+		"/D/program_code/python/pycv/chapter3/canny.jpg",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/Anaconda/README.md",
+		"/D/记录.txt",
+		"/Z/test/HD900/HBRFaceEngineApi.h",
+		"/D/work/work_task_ai/huangzhe/demo_simple_pose.py",
+		"/D/program_code/python/gluon-cv-master/scripts/detection/yolo/train_yolo3.py",
+		"/C/Users/dell-pc/Downloads/log",
+		"/Y/program_code/gluon-cv/scripts/detection/yolo/demo_yolo.py",
+		"/D/program_code/python/gluon-cv-master/scripts/detection/yolo/demo_yolo.py",
+		"/D/work/work_task_ai/huangzhe/demo_yolo.py",
+		"/D/work/work_task_ai/huangzhe/detection.py",
+		"/C/Users/dell-pc/Downloads/未确认 561862.crdownload",
+		"/D/OneDrive/Desktop/YOLOV3.log",
+		"/D/software/trojan-cli/config.json",
+		"/D/OneDrive/文档/Tencent Files/446998841/FileRecv/session.log",
+		"/D/OneDrive/文档/Tencent Files/446998841/FileRecv/session(1).log",
+		"/D/OneDrive/文档/tencent files/446998841/FileRecv/demo_yolo.py",
+		"/D/OneDrive/文档/tencent files/446998841/FileRecv/demo_simple_pose.py",
+		"/D/OneDrive/文档/tencent files/446998841/FileRecv/detection.py",
+		"/D/OneDrive/Desktop/rtsp.py",
+		"/D/Program Files (x86)/Anaconda3/pkgs/conda-4.8.2-py36_0/Scripts/conda-script.py",
+		"/D/OneDrive/Desktop/session.log",
+		"/Z/tmp/retinaface_lwb_wk/mnet_v1_0_25_dw_yuv.cfg",
+		"/Z/tmp/retinaface_lwb_wk/mnet_v1_0_25_dw_rgb.cfg",
+		"/Z/tmp/retinaface_lwb_wk/model/mnet_v1_0_25_dw.prototxt",
+		"/Z/tmp/retinaface_lwb_wk/model/r18_mxnet-symbol.prototxt",
+		"/Z/tmp/retinaface_lwb_wk/model/retina-symbol.prototxt.debug",
+		"/Z/tmp/retinaface_lwb_wk/retinaface_inst_rgb.cfg",
+		"/Z/tmp/retinaface_new_v1/retinaface_inst_rgb.cfg",
+		"/Z/tmp/retinaface_new_v1/retinaface_inst_yvu.cfg",
+		"/D/OneDrive/Desktop/mnet_v1_0_25_dw_plus.prototxt",
+		"/D/OneDrive/Desktop/mnet_v1_0_25_dw.prototxt",
+		"/Z/tmp/retinaface_lwb_wk/mnet_v1_0_25_dw.cfg",
+		"/Z/tmp/retinaface_new_v1/model/retina-symbol.prototxt",
+		"/Z/tmp/retinaface_lwb_wk/retinaface_inst_yvu.cfg",
+		"/Z/tmp/retinaface_lwb_wk/retinaface_inst_debug.cfg",
+		"/Z/tmp/retinaface/retinaface_inst_yvu.cfg",
+		"/Z/tmp/retinaface_new_v1/retinaface_inst_debug.cfg",
+		"/Z/tmp/retinaface/retinaface_inst_rgb.cfg",
+		"/Z/tmp/retinaface/model/retina-symbol.prototxt.debug",
+		"/Z/tmp/retinaface/model/retina-symbol.prototxt",
+		"/Z/tmp/retinaface_new_v1/model/r18_mxnet-symbol.prototxt",
+		"/Z/tmp/retinaface_new_v1/model/retina-symbol.prototxt.debug",
+		"/D/work/mnet_v1_0_25_dw.prototxt",
+		"/D/work/mnet_v1_1_0_dw.prototxt",
+		"/C/Users/dell-pc/AppData/Local/Temp/HBRFaceEngineApi.cpp-rev15947.svn000.tmp.cpp",
+		"/C/Users/dell-pc/AppData/Local/Temp/HBRFaceNnieExt.cpp-rev15842.svn000.tmp.cpp",
+		"/Z/eclipse-workspace/FaceEmbedd/setup/upg/updateRdo/rcS",
+		"/Z/HI3519_SDK/Hi3519AV100_SDK_V2.0.1.0/smp/a53_linux/mpp/sample/svp/nnie/sample_nnie_main.c",
+		"/Z/eclipse-workspace/FaceEmbedd/setup/upg/updateRdo/update.ini",
+		"/Z/eclipse-workspace/FaceEmbedd/setup/upg/updateRdo/run.sh",
+		"/D/OneDrive/Desktop/onekey_rebuild.sh",
+		"/Z/eclipse-workspace/FaceEmbedd/nnie_retinaface/src/main_entry.cpp",
+		"/Z/eclipse-workspace/FaceEmbedd/setup/upg/createImg.sh",
+		"/Z/eclipse-workspace/FaceEmbedd/setup_bak/upg/updateRdo/rcS",
+		"/Z/tmp/lwb_wk/model-0001.cfg",
+		"/Z/tmp/lwb_wk/insighface_resnet50_new_rgb.cfg",
+		"/Z/onekey/onekey_build.sh",
+		"/Z/onekey/onekey_rebuild.sh",
+		"/Z/svn/Q4Server/.gitignore"
+	],
+	"find":
+	{
+		"height": 22.0
+	},
+	"find_in_files":
+	{
+		"height": 102.0,
+		"where_history":
+		[
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"rebuild_tags",
+			"Frame",
+			"red_stride8",
+			"<CUSTOM>",
+			"interpreter",
+			"myclass",
+			"myclass = MyNumbers()\n",
+			"transitions",
+			"1001",
+			"lwb",
+			"1001",
+			"/home/lwb/svn/"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"1004",
+			"1003",
+			"1001",
+			"/home/zyyt/"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "/D/program_code/python/gluon-cv-master/scripts/detection/yolo/demo_yolo.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5032,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1590,
+								1590
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 234.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "/D/program_code/python/gluon-cv-master/MANIFEST.in",
+					"semi_transient": true,
+					"settings":
+					{
+						"buffer_size": 97,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								97,
+								97
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 65.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 22.0
+	},
+	"input":
+	{
+		"height": 153.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.Debugger":
+	{
+		"height": 240.0
+	},
+	"output.exec":
+	{
+		"height": 284.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "Anaconda Python Builder",
+	"project": "python.sublime-project",
+	"replace":
+	{
+		"height": 40.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"t",
+				"test\\test.py"
+			],
+			[
+				"te",
+				"test\\test.py"
+			],
+			[
+				"test",
+				"test\\test.py"
+			],
+			[
+				"",
+				"pycv\\chapter3\\contours.py"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 344.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

@@ -1,0 +1,5 @@
+{
+    "cmd": ["D:/Program Files (x86)/Anaconda3/envs/py35/python.exe", "-u", "$file"],
+    "file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
+    "selector": "source.python"
+}

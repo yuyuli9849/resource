@@ -1,0 +1,677 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"is",
+				"isFileExist"
+			],
+			[
+				"stu",
+				"student"
+			],
+			[
+				"str",
+				"string"
+			],
+			[
+				"st",
+				"string"
+			],
+			[
+				"im",
+				"images"
+			],
+			[
+				"vec",
+				"vector\tstd::vector"
+			],
+			[
+				"inc",
+				"include"
+			],
+			[
+				"clo",
+				"cols"
+			],
+			[
+				"tra",
+				"transform_type"
+			],
+			[
+				"read_jpeg_file_to",
+				"read_jpeg_file_to_rgb"
+			],
+			[
+				"pr",
+				"program_code"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "/Z/work/work_task_facetest/test_Q4Server/code/Q4Server/hb_core/hb_faceengine/3519a/HBRFaceEngineApi.h",
+			"settings":
+			{
+				"buffer_size": 2250,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/Z/work/work_task_facetest/test_Q4Server/code/Q4Server/hb_core/hb_faceengine/3519a/HBRFaceCachePool.cpp",
+			"settings":
+			{
+				"buffer_size": 9819,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Z/work/work_task_facetest/nnie_retinaface/code/project/nnie_retinaface/CMakeLists.txt",
+			"settings":
+			{
+				"buffer_size": 2735,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "\n#include \"HBRFaceNnieExt.h\"\n#include \"HBRNnieBaseInference.h\"\n#include \"HBRNnieCommonDefine.h\"\n#include \"HBRMMPHelper.h\"\n\n#include \"logging_util.h\"\n#include \"file_util.h\"\n#include \"opencv_help.h\"\n\n#include <opencv2/imgproc/imgproc.hpp>\n#include <opencv2/opencv.hpp>\n\nextern char _binary_inst_resnet50_new_myself_112x112_rgb_wk_end;\nextern int  _binary_inst_resnet50_new_myself_112x112_rgb_wk_size;\nextern char _binary_inst_resnet50_new_myself_112x112_rgb_wk_start;\nextern char _binary_inst_retinaface_inst_myself_1088x1920_yvu_wk_end;\nextern int  _binary_inst_retinaface_inst_myself_1088x1920_yvu_wk_size;\nextern char _binary_inst_retinaface_inst_myself_1088x1920_yvu_wk_start;\nextern char _binary_inst_retinaface_inst_myself_1088x1920_rgb_wk_end;\nextern int  _binary_inst_retinaface_inst_myself_1088x1920_rgb_wk_size;\nextern char _binary_inst_retinaface_inst_myself_1088x1920_rgb_wk_start;\n\n#include \"HBRFaceEngineConfiguration.h\"\n\nCHBRFaceNnieExt *CHBRFaceNnieExt::s_pInstance = NULL;\nstatic CHBRFaceNnieExt::CGrabNnie grabnnie;\n\nstatic inline void convertToFaceBox(NNIE_FaceInfo::face_bbox *bbox, const int facenum)\n{\n    for (int ko = 0; ko < facenum; ++ko)\n    {\n        for (int kp = 0; kp < 5; ++kp)\n        {\n            bbox[ko].landmark.x[kp] *= 2.0f;\n            bbox[ko].landmark.y[kp] *= 2.0f;\n        }\n\n        bbox[ko].faceRt.val[0] *= 2.0f;\n        bbox[ko].faceRt.val[1] *= 2.0f;\n        bbox[ko].faceRt.val[2] *= 2.0f;\n        bbox[ko].faceRt.val[3] *= 2.0f;\n    }\n}\n\nvoid CallbackFuncRetinaFace(void *face_list, int face_num, long lContext)\n{\n    CHBRFaceNnieExt *pThis = (CHBRFaceNnieExt *)lContext;\n    if (pThis && face_list && face_num > 0)\n    {\n        pThis->PushDetectFaceInfo((const NNIE_FaceInfo::face_bbox *)face_list, face_num);\n    }\n}\n\nvoid CallFuncInsightFace(const std::vector<float> &out_features, long lContext)\n{\n    CHBRFaceNnieExt *pThis = (CHBRFaceNnieExt *)lContext;\n    if (pThis)\n    {\n        pThis->PushRecognFaceInfo(out_features);\n    }\n}\n\ninline bool MatConverToYvu(const cv::Mat &input, unsigned char *pData, const unsigned int memsize)\n{\n    if (input.empty() || pData == NULL)\n        return false;\n\n    cv::Mat yuvimg;\n    cv::cvtColor(input, yuvimg, CV_BGR2YUV_I420);\n\n    memcpy(pData, yuvimg.data, memsize);\n    return true;\n}\n\ninline bool MatConverToRgb(const cv::Mat &input, unsigned char *pData, const unsigned int memsize)\n{\n    if (input.empty() || pData == NULL)\n        return false;\n\n    std::vector<cv::Mat> channels;\n    cv::split(input, channels);\n\n    memset(pData, 0, memsize);\n\n    for (int i = 2; i >= 0; i--)\n    {\n        cv::Mat dst = channels[i];\n        memcpy(pData + i * input.rows * input.cols, dst.data, input.rows * input.cols);\n    }\n\n    return true;\n}\n\nCHBRFaceNnieExt::CHBRFaceNnieExt()\n    : m_pNNIERecognInfer(NULL), m_pNNIEDetectInfer(NULL)\n{\n    m_lRecognPhyAddr = 0;\n    m_pRecognVirAddr = 0;\n    m_nRecognMemSize = 0;\n\n    m_lDetectPhyAddr = 0;\n    m_pDetectVirAddr = 0;\n    m_nDetectMemSize = 0;\n}\n\nCHBRFaceNnieExt::~CHBRFaceNnieExt()\n{\n}\n\nCHBRFaceNnieExt *CHBRFaceNnieExt::GetInstance()\n{\n    if (s_pInstance == NULL)\n    {\n        s_pInstance = new CHBRFaceNnieExt();\n    }\n    return s_pInstance;\n}\n\nbool CHBRFaceNnieExt::PushDetectFaceInfo(const NNIE_FaceInfo::face_bbox *bboxes, const int facenum)\n{\n\n    std::vector<NNIE_FaceInfo::face_bbox> array_bbox(facenum);\n    memcpy(array_bbox.data(), bboxes, sizeof(NNIE_FaceInfo::face_bbox) * facenum);\n\n    m_cache_detect.emplace_front(array_bbox);\n    return true;\n}\n\nbool CHBRFaceNnieExt::GetDetectFaceInfo(std::vector<hber_faceinfo::face_bbox> &bboxes, bool bConvert)\n{\n    if (!m_cache_detect.empty())\n    {\n        auto iter = m_cache_detect.begin();\n        std::vector<NNIE_FaceInfo::face_bbox> &nnie_bboxes = *iter;\n\n        for (NNIE_FaceInfo::face_bbox nnie : nnie_bboxes)\n        {\n            if (bConvert)\n                convertToFaceBox(&nnie, 1);\n\n            hber_faceinfo::face_bbox hb_bbox;\n            hb_bbox.score = nnie.score;\n            hb_bbox.landmark.x[0] = nnie.landmark.x[0];\n            hb_bbox.landmark.y[0] = nnie.landmark.y[0];\n\n            hb_bbox.landmark.x[1] = nnie.landmark.x[1];\n            hb_bbox.landmark.y[1] = nnie.landmark.y[1];\n\n            hb_bbox.landmark.x[2] = nnie.landmark.x[2];\n            hb_bbox.landmark.y[2] = nnie.landmark.y[2];\n\n            hb_bbox.landmark.x[3] = nnie.landmark.x[3];\n            hb_bbox.landmark.y[3] = nnie.landmark.y[3];\n\n            hb_bbox.landmark.x[4] = nnie.landmark.x[4];\n            hb_bbox.landmark.y[4] = nnie.landmark.y[4];\n\n            hb_bbox.faceRt.x0 = nnie.faceRt.val[0];\n            hb_bbox.faceRt.y0 = nnie.faceRt.val[1];\n            hb_bbox.faceRt.x1 = nnie.faceRt.val[2];\n            hb_bbox.faceRt.y1 = nnie.faceRt.val[3];\n\n            bboxes.push_back(hb_bbox);\n        }\n\n        m_cache_detect.pop_front();\n    }\n\n    return true;\n}\n\nbool CHBRFaceNnieExt::PushRecognFaceInfo(const std::vector<float> &out_features)\n{\n    m_cache_feature.push_back(out_features);\n    return true;\n}\n\nbool CHBRFaceNnieExt::GetRecognFaceInfo(std::vector<float> &out_features)\n{\n    if (!m_cache_feature.empty())\n    {\n        auto iter = m_cache_feature.begin();\n        out_features = *iter;\n\n        m_cache_feature.pop_front();\n    }\n    return true;\n}\n\nbool CHBRFaceNnieExt::InitHBRFaceNnieData()\n{\n    char strworkdir[1024] = {0};\n    if (!getcwd(strworkdir, 1024))\n    {\n        LOG(ERROR) << \"get local application path error！\";\n        return false;\n    }\n\n#if 0\n    //读.wk模型文件\n    std::string str_recogn_model = std::string(strworkdir) + \"/model/3519a/inst_resnet50_new_myself_112x112_rgb.wk\";\n\n    //识别模型初始化;输入类型RGB\n    m_pNNIERecognInfer = createInference(INFERENCE_TYPE::INSIGHTFACE_TYPE);\n    //判断模型路径是否为合法;\n    if (FileUtil::isFileExist(str_recogn_model.c_str()))\n    {\n        if (m_pNNIERecognInfer->LoadNnieModelFile(str_recogn_model.c_str()) < 0)\n        {\n            LOG(ERROR) << \"recogntion intergrate load nnie mode file error!\";\n            return false;\n        }\n\n        m_pNNIERecognInfer->SetNnieCallBack((long)CallFuncInsightFace, (long)this);\n\n        //分配内存;\n        m_nRecognMemSize = 112 * 112 * 3;\n\n        if (CMMPHelper::MallocMem((unsigned long *)&m_lRecognPhyAddr, &m_pRecognVirAddr, m_nRecognMemSize) < 0)\n        {\n            LOG(ERROR) << \"recogninfer malloc memory error !\";\n            return false;\n        }\n    }\n    else\n    {\n        LOG(ERROR) << \"recogntion model file isn't exist!\";\n        return false;\n    }\n\n    //std::string str_detect_model = std::string(strworkdir) + \"/model/3519a/inst_retinaface_inst_myself_1088x1920_yvu.wk\";\n    std::string str_detect_model = std::string(strworkdir) + \"/model/3519a/mnet_v1_0_25_dw_myself_1088x1920_rgb.wk\";\n\n    //检测模型初始化;输入类型RGB\n    m_pNNIEDetectInfer = createInference(INFERENCE_TYPE::RETINAFACE_TYPE);\n    //判断模型路径是否为合法;\n    if (FileUtil::isFileExist(str_detect_model.c_str()))\n    {\n        if (m_pNNIEDetectInfer->LoadNnieModelFile(str_detect_model.c_str()) < 0)\n        {\n            LOG(ERROR) << \"recogninfer load nnie mode file error!\";\n            return false;\n        }\n\n        m_pNNIEDetectInfer->SetNnieCallBack((long)CallbackFuncRetinaFace, (long)this);\n\n        //分配内存;\n        m_nDetectMemSize = 1920 * 1088 * 3 / 2;\n        if (CMMPHelper::MallocMem((unsigned long *)&m_lDetectPhyAddr, &m_pDetectVirAddr, m_nDetectMemSize) < 0)\n        {\n            LOG(ERROR) << \"detector malloc memory error!\";\n            return false;\n        }\n    }\n    else\n    {\n        LOG(ERROR) << \"detector model file isn't exist!\";\n        return false;\n    }\n\n#else\n    //读.o文件内的模型数据\n\n    //识别模型初始化;输入类型RGB\n    m_pNNIERecognInfer = createInference(INFERENCE_TYPE::INSIGHTFACE_TYPE);\n\n    if (&_binary_inst_resnet50_new_myself_112x112_rgb_wk_size > 0)\n    {\n        if (m_pNNIERecognInfer->LoadNnieModelMem(&_binary_inst_resnet50_new_myself_112x112_rgb_wk_start, \n                                                 (int)&_binary_inst_resnet50_new_myself_112x112_rgb_wk_size) < 0)\n        {\n            LOG(ERROR) << \"recogntion intergrate load nnie model mem error!\";\n            return false;   \n        }\n\n        m_pNNIERecognInfer->SetNnieCallBack((long)CallFuncInsightFace, (long)this);\n\n        //分配内存;\n        m_nRecognMemSize = 112 * 112 * 3;\n\n        if (CMMPHelper::MallocMem((unsigned long *)&m_lRecognPhyAddr, &m_pRecognVirAddr, m_nRecognMemSize) < 0)\n        {\n            LOG(ERROR) << \"recogninfer malloc memory error !\";\n            return false;\n        }\n    }\n    else\n    {\n        LOG(ERROR) << \"recogntion model size <= 0!\";\n        return false;\n    }\n\n    //检测模型初始化;输入类型RGB\n    m_pNNIEDetectInfer = createInference(INFERENCE_TYPE::RETINAFACE_TYPE);\n    \n    if (&_binary_inst_retinaface_inst_myself_1088x1920_rgb_wk_size > 0)\n    {\n        if (m_pNNIEDetectInfer->LoadNnieModelMem(&_binary_inst_retinaface_inst_myself_1088x1920_rgb_wk_start, \n                                                 (int)&_binary_inst_retinaface_inst_myself_1088x1920_rgb_wk_size) < 0)\n        {\n            LOG(ERROR) << \"recogninfer load nnie model mem error!\";\n            return false;\n        }\n\n        m_pNNIEDetectInfer->SetNnieCallBack((long)CallbackFuncRetinaFace, (long)this);\n\n        //分配内存;\n        m_nDetectMemSize = 1920 * 1088 * 3 / 2;\n        if (CMMPHelper::MallocMem((unsigned long *)&m_lDetectPhyAddr, &m_pDetectVirAddr, m_nDetectMemSize) < 0)\n        {\n            LOG(ERROR) << \"detector malloc memory error!\";\n            return false;\n        }\n    }\n    else\n    {\n        LOG(ERROR) << \"detector model file <= 0\";\n        return false;\n    }\n\n\n#endif\n    return true;\n}\n\nbool CHBRFaceNnieExt::ReleaseHBRFaceNnieData()\n{\n    if (m_pNNIERecognInfer)\n        m_pNNIERecognInfer->UnLoadNnieModelFile();\n    releaseInference(m_pNNIERecognInfer);\n    LOG(INFO) << \"unload recognition nnie...\";\n\n    if (m_pNNIEDetectInfer)\n        m_pNNIEDetectInfer->UnLoadNnieModelFile();\n    releaseInference(m_pNNIEDetectInfer);\n    LOG(INFO) << \"unload detection nnie...\";\n\n    if (m_lDetectPhyAddr && m_pDetectVirAddr)\n    {\n        CMMPHelper::FreeMem((unsigned long *)m_lDetectPhyAddr, (unsigned char **)&m_pDetectVirAddr);\n        LOG(INFO) << \"free memory detect ...\";\n    }\n\n    if (m_lRecognPhyAddr && m_pRecognVirAddr)\n    {\n        CMMPHelper::FreeMem((unsigned long *)m_lRecognPhyAddr, (unsigned char **)&m_pRecognVirAddr);\n        LOG(INFO) << \"free memory recogn ...\";\n    }\n\n    return true;\n}\n\nbool CHBRFaceNnieExt::DoDetectFace(const unsigned char *pu64Vir,\n                                   const unsigned long u64Phy, const unsigned int size,\n                                   std::vector<hber_faceinfo::face_bbox> &faceboxs, bool bConvert)\n{\n    if (m_pNNIEDetectInfer == NULL)\n        return false;\n\n    MutexGuard  locker(mutex_detect);\n\n    m_pDetectVirAddr = pu64Vir;\n    m_lDetectPhyAddr = u64Phy;\n\n    m_pNNIEDetectInfer->SetInputData((const unsigned char *)m_pDetectVirAddr, (const unsigned char *)m_lDetectPhyAddr, size);\n\n    if (m_pNNIEDetectInfer->NnieForward() < 0)\n    {\n        LOG(ERROR) << \"detect face nnieforward error!\";\n\n        return false;\n    }\n\n\n    GetDetectFaceInfo(faceboxs, bConvert);\n\n    return true;\n}\n\nbool CHBRFaceNnieExt::DoDetectFace(const cv::Mat &input, std::vector<hber_faceinfo::face_bbox> &faceboxs, std::vector<cv::Mat> &alignVt, bool bConvert)\n{\n    if (m_pNNIEDetectInfer == NULL)\n        return false;\n\n    // int size = input.rows * input.cols * 3 / 2;\n\n    // MutexGuard  locker(mutex_detect);\n\n    // //需要将mat 类型转换为 yuv数据;\n    // if (!MatConverToYvu(input, m_pDetectVirAddr, size))\n    // {\n    //     LOG(ERROR) << \"detect face mat convert to rgb failed!\";\n\n    //     return false;\n    // }\n\n    int size = input.rows * input.cols * 3 ;\n\n    MutexGuard  locker(mutex_detect);\n\n    //需要将mat 类型转换为 yuv数据;\n    if (!MatConverToRgb(input, m_pDetectVirAddr, size))\n    {\n        LOG(ERROR) << \"detect face mat convert to rgb failed!\";\n\n        return false;\n    }\n\n\n    m_pNNIEDetectInfer->SetInputData((const unsigned char *)m_pDetectVirAddr, (const unsigned char *)m_lDetectPhyAddr, size);\n\n    if (m_pNNIEDetectInfer->NnieForward() < 0)\n    {\n        LOG(ERROR) << \"detect face nnieforward error!\";\n\n        return false;\n    }\n\n    GetDetectFaceInfo(faceboxs, bConvert);\n\n    //aligment face;\n    if (!faceboxs.empty())\n        alignVt = DoAlignMentFace(input, faceboxs);\n\n    return true;\n}\n\nbool CHBRFaceNnieExt::DoRecognFace(const cv::Mat &input, cv::Mat &feature)\n{\n    if (m_pNNIERecognInfer == NULL)\n        return false;\n\n    MutexGuard  locker(mutex_recogn);\n    \n    int size = input.rows * input.cols * 3;\n\n    //需要将mat 类型转换为 rgb数据;\n    if (!MatConverToRgb(input, m_pRecognVirAddr, size))\n    {\n        LOG(ERROR) << \"recogn face mat convert to rgb failed!\";\n\n        return false;\n    }\n\n    m_pNNIERecognInfer->SetInputData((const unsigned char *)m_pRecognVirAddr, (const unsigned char *)m_lRecognPhyAddr, size);\n\n    if (m_pNNIERecognInfer->NnieForward() < 0)\n    {\n        LOG(ERROR) << \"recognition face nnieforward!\";\n\n        mutex_recogn.unlock();\n        return false;\n    }\n\n    std::vector<float> out_features;\n    GetRecognFaceInfo(out_features);\n\n    if (out_features.size() > 0)\n    {\n        feature = cv::Mat(128 * 4, 1, CV_32F);\n        memcpy(feature.data, out_features.data(), 512 * sizeof(float));\n    }\n    else\n    {\n        return false;\n    }\n\n    return true;\n}\n\nbool CHBRFaceNnieExt::DoRecognFace(const std::vector<cv::Mat> &vet_aligment, std::vector<cv::Mat> &vet_fea)\n{\n    if (m_pNNIERecognInfer == NULL)\n        return false;\n\n    for (cv::Mat input : vet_aligment)\n    {\n        cv::Mat feature;\n        if (DoRecognFace(input, feature))\n        {\n            vet_fea.push_back(feature);\n        }\n    }\n\n    return true;\n}\n\nbool CHBRFaceNnieExt::DoCalcuSimilary(const cv::Mat &src_img,\n                                      const std::vector<hber_faceinfo::studentinfo_res> &vet_db_stuinfo,\n                                      cv::Mat &curr_feature,\n                                      const hber_faceinfo::face_bbox &facebox,\n                                      hber_faceinfo::studentinfo_res &res_stuinfo,\n                                      const float fScoreThreshold,\n                                      bool &bUpdateFeatBak)\n{\n    if (vet_db_stuinfo.size() <= 0)\n    {\n        return false;\n    }\n\n\n\n    auto doVectorDist = [](const cv::Mat &src, const cv::Mat &dst) -> float {\n\n\n\n        HBRFaceEngineConfiguration * instance = HBRFaceEngineConfiguration::getInstance();\n        int  calcuSimilarytype =  instance->getCalcuSimilaryType();\n        if(calcuSimilarytype == 0)\n        {\n            float score = 0.0f;\n            cv::Mat _s2, _l2;\n            cv::subtract(src, dst, _s2);\n            cv::multiply(_s2, _s2, _l2);\n            score = cv::sum(_l2).val[0];\n            return score;\n\n        }\n        else\n        {\n            float score = 0.0f;\n            cv::Mat  t = dst.t();\n            score =  src.dot(t);\n            return score;    \n        }\n        \n    };\n\n    float fscore_min_org = 10.0;\n    int index_min_org = -1;\n\n    float fscore_min_bak = 10.0;\n    int index_min_bak = -1;\n\n    hber_faceinfo::studentinfo_res db_stuinfo_org, db_stuinfo_bak, recogn_stuinfo_res;\n    for (auto db_stuinfo : vet_db_stuinfo)\n    {\n        if (db_stuinfo.feature) //&& db_stuinfo.feature_bak\n        {\n            cv::Mat db_mat_feat(512, 1, CV_32F);\n            db_mat_feat.data = (uchar *)db_stuinfo.feature;\n\n            cv::Mat db_mat_feat_bak(512, 1, CV_32F);\n            db_mat_feat_bak.data = (uchar *)db_stuinfo.feature_bak;\n\n            const float fscore_org = doVectorDist(curr_feature, db_mat_feat);\n            const float fscore_bak = doVectorDist(curr_feature, db_mat_feat_bak);\n\n            if (fscore_min_org > fscore_org)\n            {\n                fscore_min_org = fscore_org;\n                db_stuinfo_org = db_stuinfo;\n            }\n\n            if (fscore_min_bak > fscore_bak)\n            {\n                fscore_min_bak = fscore_bak;\n                db_stuinfo_bak = db_stuinfo;\n            }\n        }\n    }\n\n    recogn_stuinfo_res = fscore_min_org < fscore_min_bak ? db_stuinfo_org : db_stuinfo_bak;\n    recogn_stuinfo_res.bbox = facebox.faceRt;\n    recogn_stuinfo_res.similary = fscore_min_org < fscore_min_bak ? fscore_min_org : fscore_min_bak;\n\n    if (recogn_stuinfo_res.similary < fScoreThreshold)\n    {\n        if (fscore_min_bak < 0.6 && recogn_stuinfo_res.min_similary > fscore_min_bak)\n        {\n            bUpdateFeatBak = true;\n        }\n        else\n        {\n            bUpdateFeatBak = false;\n        }\n\n        const int nExtentW = 20;\n        const int nExtentH = 20;\n        cv::Rect face_rect = cv::Rect(cv::Point(recogn_stuinfo_res.bbox.x0, recogn_stuinfo_res.bbox.y0),\n                                      cv::Point(recogn_stuinfo_res.bbox.x1, recogn_stuinfo_res.bbox.y1));\n        HelpUtil::checkRoiBound(face_rect, src_img.cols, src_img.rows);\n        cv::Rect face_roi_ext = cv::Rect(face_rect.x - nExtentW, face_rect.y - nExtentH, face_rect.width + 2 * nExtentW, face_rect.height + 2 * nExtentH);\n        HelpUtil::checkRoiBound(face_roi_ext, src_img.cols, src_img.rows);\n\n        memcpy(res_stuinfo.feature, curr_feature.data, 512 * sizeof(float));\n        res_stuinfo.similary = recogn_stuinfo_res.similary;\n        res_stuinfo.name = recogn_stuinfo_res.name;\n        res_stuinfo.classid = recogn_stuinfo_res.classid;\n        res_stuinfo.img_face = src_img(face_rect);\n    }\n    else\n    {\n        res_stuinfo.similary = recogn_stuinfo_res.similary;\n    }\n\n    return true;\n}\n\nbool CHBRFaceNnieExt::DoCalcuSimilary(const cv::Mat &src_img,\n                                      const std::vector<hber_faceinfo::studentinfo_res> &vet_db_stuinfo,\n                                      const std::vector<cv::Mat> &vet_curr_features,\n                                      const std::vector<hber_faceinfo::face_bbox> &vet_facebox,\n                                      std::vector<hber_faceinfo::studentinfo_res> &vet_stuinfo,\n                                      const float fScoreThreshold,\n                                      std::vector<bool> &bVetUpdateFeatBak,\n                                      std::vector<cv::Mat> &alignVt)\n{\n    //TODO后期可以考虑分段搜索算法;\n    if (vet_db_stuinfo.size() <= 0 || vet_curr_features.size() <= 0)\n    {\n        return false;\n    }\n\n    auto doVectorDist = [](const cv::Mat &src, const cv::Mat &dst) -> float {\n        HBRFaceEngineConfiguration * instance = HBRFaceEngineConfiguration::getInstance();\n        int  calcuSimilarytype =  instance->getCalcuSimilaryType();\n        if(calcuSimilarytype == 0)\n        {\n            float score = 0.0f;\n            cv::Mat _s2, _l2;\n            cv::subtract(src, dst, _s2);\n            cv::multiply(_s2, _s2, _l2);\n            score = cv::sum(_l2).val[0];\n            return score;\n\n        }\n        else\n        {\n            float score = 0.0f;\n            cv::Mat  t = dst.t();\n            score =  src.dot(t);\n            return score;    \n        }\n    };\n\n    for (int index = 0; index < vet_curr_features.size(); ++index)\n    {\n        const cv::Mat &cur_feat = vet_curr_features[index];\n        if (cur_feat.empty() || cur_feat.rows != 512)\n        {\n            continue;\n        }\n\n        float fscore_min_org = 10.0;\n        int index_min_org = -1;\n\n        float fscore_min_bak = 10.0;\n        int index_min_bak = -1;\n\n        hber_faceinfo::studentinfo_res db_stuinfo_org, db_stuinfo_bak, recogn_stuinfo_res;\n        for (auto db_stuinfo : vet_db_stuinfo)\n        {\n            if (db_stuinfo.feature) //&& db_stuinfo.feature_bak\n            {\n                cv::Mat db_mat_feat(512, 1, CV_32F);\n                db_mat_feat.data = (uchar *)db_stuinfo.feature;\n\n                cv::Mat db_mat_feat_bak(512, 1, CV_32F);\n                db_mat_feat_bak.data = (uchar *)db_stuinfo.feature_bak;\n\n                const float fscore_org = doVectorDist(cur_feat, db_mat_feat);\n                const float fscore_bak = doVectorDist(cur_feat, db_mat_feat_bak);\n\n                if (fscore_min_org > fscore_org)\n                {\n                    fscore_min_org = fscore_org;\n                    db_stuinfo_org = db_stuinfo;\n                }\n\n                if (fscore_min_bak > fscore_bak)\n                {\n                    fscore_min_bak = fscore_bak;\n                    db_stuinfo_bak = db_stuinfo;\n                }\n            }\n        }\n\n        recogn_stuinfo_res = fscore_min_org < fscore_min_bak ? db_stuinfo_org : db_stuinfo_bak;\n        recogn_stuinfo_res.bbox = vet_facebox[index].faceRt;\n        recogn_stuinfo_res.similary = fscore_min_org < fscore_min_bak ? fscore_min_org : fscore_min_bak;\n\n        if (recogn_stuinfo_res.similary < fScoreThreshold)\n        {\n            if (fscore_min_bak < 0.6 && recogn_stuinfo_res.min_similary > fscore_min_bak)\n            {\n                bVetUpdateFeatBak.push_back(true);\n            }\n            else\n            {\n                bVetUpdateFeatBak.push_back(false);\n            }\n\n            const int nExtentW = 20;\n            const int nExtentH = 20;\n            cv::Rect face_rect = cv::Rect(cv::Point(recogn_stuinfo_res.bbox.x0, recogn_stuinfo_res.bbox.y0),\n                                          cv::Point(recogn_stuinfo_res.bbox.x1, recogn_stuinfo_res.bbox.y1));\n            HelpUtil::checkRoiBound(face_rect, src_img.cols, src_img.rows);\n            cv::Rect face_roi_ext = cv::Rect(face_rect.x - nExtentW, face_rect.y - nExtentH, face_rect.width + 2 * nExtentW, face_rect.height + 2 * nExtentH);\n            HelpUtil::checkRoiBound(face_roi_ext, src_img.cols, src_img.rows);\n\n            memcpy(vet_stuinfo[index].feature, cur_feat.data, 512 * sizeof(float));\n            vet_stuinfo[index].similary = recogn_stuinfo_res.similary;\n            vet_stuinfo[index].name = recogn_stuinfo_res.name;\n            vet_stuinfo[index].classid = recogn_stuinfo_res.classid;\n            vet_stuinfo[index].img_face = src_img(face_roi_ext);\n            //vet_stuinfo[index].img_face = alignVt[index];\n\n            //     char buf[128] = {0};\n            //     sprintf(buf,\"%d.jpg\",index);\n            //     cv::imwrite(buf,vet_stuinfo[index].img_face);\n        }\n        else\n        {\n            vet_stuinfo[index].similary = recogn_stuinfo_res.similary;\n        }\n    }\n\n    return true;\n}",
+			"file": "/Z/work/work_task_facetest/test_Q4Server/code/Q4Server/hb_core/hb_faceengine/3519a/HBRFaceNnieExt.cpp",
+			"file_size": 23376,
+			"file_write_time": 132279764811700576,
+			"settings":
+			{
+				"buffer_size": 22378,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/Z/work/work_task_facetest/test_Q4Server/code/Q4Server/hb_core/hb_faceengine/3519a/HBRFaceEngineApi.cpp",
+			"settings":
+			{
+				"buffer_size": 10855,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"re",
+				"Package Control: Remove Package"
+			],
+			[
+				"reso",
+				"PackageResourceViewer: Open Resource"
+			],
+			[
+				"in",
+				"Package Control: Install Package"
+			],
+			[
+				"r",
+				"Package Control: Remove Package"
+			],
+			[
+				"ins",
+				"Package Control: Install Package"
+			],
+			[
+				"i",
+				"Package Control: Install Package"
+			],
+			[
+				"rem",
+				"Package Control: Remove Package"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"instal",
+				"Package Control: Install Package"
+			],
+			[
+				"remo",
+				"Package Control: Remove Package"
+			],
+			[
+				"anac",
+				"Anaconda: Vagrant Init"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			],
+			[
+				"",
+				"Install Package Control"
+			],
+			[
+				"install",
+				"Install Package Control"
+			],
+			[
+				"pack",
+				"Install Package Control"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 235.0,
+		"history":
+		[
+			"ls"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": false,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/Z/work/work_task_facetest",
+		"/Z/work/work_task_facetest/nnie_retinaface",
+		"/Z/work/work_task_facetest/nnie_retinaface/code",
+		"/Z/work/work_task_facetest/nnie_retinaface/code/project",
+		"/Z/work/work_task_facetest/nnie_retinaface/code/project/common",
+		"/Z/work/work_task_facetest/nnie_retinaface/code/project/common/include",
+		"/Z/work/work_task_facetest/nnie_retinaface/code/project/common/include/opencv_3519a",
+		"/Z/work/work_task_facetest/nnie_retinaface/code/project/common/lib",
+		"/Z/work/work_task_facetest/nnie_retinaface/code/project/nnie_retinaface",
+		"/Z/work/work_task_facetest/test_Q4Server",
+		"/Z/work/work_task_facetest/test_Q4Server/code",
+		"/Z/work/work_task_facetest/test_Q4Server/code/Q4Server",
+		"/Z/work/work_task_facetest/test_Q4Server/code/Q4Server/hb_core",
+		"/Z/work/work_task_facetest/test_Q4Server/code/Q4Server/hb_core/hb_faceengine",
+		"/Z/work/work_task_facetest/test_Q4Server/code/Q4Server/hb_core/hb_faceengine/3519a",
+		"/Z/work/work_task_facetest/test_Q4Server/code/Q4Server/hb_core/test",
+		"/Z/work/work_task_facetest/test_Q4Server/code/Q4Server/hb_faceembedd",
+		"/Z/work/work_task_facetest/test_Q4Server/test_hbcore",
+		"/Z/work/work_task_facetest/test_Q4Server/test_hbfaceweb",
+		"/Z/work/work_task_facetest/test_Q4Server/test_hbfaceweb/Q4Terminal"
+	],
+	"file_history":
+	[
+		"/Z/work/work_task_facetest/test_Q4Server/code/Q4Server/hb_core/hb_faceengine/3519a/HBRFaceEngineApi.cpp",
+		"/Z/work/work_task_facetest/test_Q4Server/code/Q4Server/hb_core/hb_faceengine/3519a/HBRFaceEngineApi.h",
+		"/Z/work/work_task_facetest/test_Q4Server/code/Q4Server/hb_core/hb_faceengine/3519a/HBRFaceNotifyMessage.cpp",
+		"/Z/work/work_task_facetest/test_Q4Server/code/Q4Server/hb_core/hb_faceengine/3519a/HBRFaceProcessThread.cpp",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/User/Projects/C/C++.sublime-project",
+		"/Z/work/work_task_facetest/nnie_retinaface/code/project/nnie_retinaface/CMakeLists.txt",
+		"/Z/work/work_task_facetest/nnie_retinaface/code/project/common/include/base/logging_util.h",
+		"/Z/work/work_task_facetest/test_Q4Server/code/Q4Server/hb_core/hb_faceengine/3519a/HBRFaceNnieExt.cpp",
+		"/Z/work/work_task_facetest/test_Q4Server/code/Q4Server/hb_core/hb_faceengine/3519a/HBRFaceNnieExt.h",
+		"/Z/work/work_task_facetest/nnie_retinaface/code/project/common/include/base/common.h",
+		"/Z/work/work_task_facetest/test_Q4Server/test_hbfaceweb/Q4Terminal/hb_faceweb",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/User/Package Control.sublime-settings",
+		"/Z/svn/Q4Server/hb_core/hb_faceengine/3519a/HBRFaceEngineApi.cpp",
+		"/Z/svn/Q4Server/hb_core/hb_faceengine/3519a/HBRFaceNnieExt.cpp",
+		"/Z/svn/Q4Server/hb_core/hb_facedb/src/HBRFaceDBInterface.h",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/SublimeLinter-clang/README.md",
+		"/Z/work/work_task_facetest/test_Q4Server/code/Q4Server/hb_core/CMakeLists.txt",
+		"/Z/work/work_task_facetest/nnie_retinaface/code/project/nnie_retinaface/src/main_entry.cpp",
+		"/Z/work/work_task_facetest/test_Q4Server/code/Q4Server/hb_core/hb_faceengine/3519a/HBRFaceCachePool.cpp",
+		"/Z/work/work_task_facetest/test_Q4Server/code/Q4Server/hb_core/hb_faceengine/3519a/HBRFaceCachePool.h",
+		"/Z/svn/Q4Server/hb_core/hb_faceengine/3519a/HBRFaceCachePool.h",
+		"/Z/tmp/retinaface_lwb_wk/test2_rgb.cfg",
+		"/Z/work/work_task_facetest/test_Q4Server/code/Q4Server/hb_core/.gitignore",
+		"/Z/work/work_task_facetest/test_Q4Server/code/Q4Server/hb_core/test/CMakeLists.txt",
+		"/Z/work/work_task_facetest/test_Q4Server/code/Q4Server/hb_core/include/HBRFaceEngineApi.h",
+		"/Z/work/work_task_facetest/test_Q4Server/code/Q4Server/hb_core/include/HBRMMPHelper.h",
+		"/Z/work/work_task_facetest/test_Q4Server/code/Q4Server/hb_core/hb_hisimmp/common_3519a/CameraFrame.h",
+		"/Z/work/work_task_facetest/test_Q4Server/code/Q4Server/hb_core/hb_hisimmp/common_3519a/CameraFrame.cpp",
+		"/Z/work/work_task_facetest/test_Q4Server/code/Q4Server/hb_core/hb_hisinnie/retinaface/HBRNnieRetinaFace.cpp",
+		"/Z/tmp/retinaface_lwb_wk/model/mnet_v1_0_25_dw.prototxt",
+		"/Z/tmp/retinaface_lwb_wk/test_rgb.cfg",
+		"/Z/work/work_task_facetest/test_Q4Server/code/Q4Server/hb_core/include/StudentInfo.h",
+		"/Z/work/work_task_facetest/test_Q4Server/code/Q4Server/hb_core/test/test.cpp",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/CTags/Default.sublime-mousemap",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/Clang Format/Default (Windows).sublime-keymap",
+		"/Z/work/work_task_facetest/test_Q4Server/code/Q4Server/hb_core/hb_faceengine/3519a/HBRFaceProcessThread.h",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/Clang Format/clang_format_custom.sublime-settings",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/Clang Format/clang_format.sublime-settings",
+		"/Z/work/work_task_facetest/test_Q4Server/code/Q4Server/.tags",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/User/Default (Windows).sublime-mousemap",
+		"/Z/work/work_task_facetest/test_Q4Server/code/Q4Server/hb_core/hb_faceengine/3519a/HBRFaceEngineConfiguration.h",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/User/CTags.sublime-settings",
+		"/Z/work/work_task_facetest/test_Q4Server/code/Q4Server/hb_core/hb_hisimmp/common_3519a/ICaptureFrame.cpp",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/CTags/CTags.sublime-settings",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/CTags/Default.sublime-keymap",
+		"/Z/tmp/retinaface_lwb_wk/model/r18_mxnet-symbol.prototxt",
+		"/Z/tmp/retinaface_lwb_wk/model/resnet_18_mxnet.prototxt",
+		"/Z/tmp/retinaface_lwb_wk/mnet_v1_0_25_dw_rgb.cfg",
+		"/D/BaiduNetdiskDownload/SVP_PC/HiSVP_PC_V1.2.0.5/software/sample_simulator/detection/yolo/src/yolo_interface.cpp",
+		"/Z/tmp/retinaface_lwb_wk/resnet_18_mxnet_yuv.cfg",
+		"/Z/tmp/retinaface_lwb_wk/resnet_18_mxnet_rgb.cfg",
+		"/Z/tmp/resnet50_new/insighface_resnet50_new_rgb.cfg",
+		"/Z/tmp/retinaface_lwb_wk/retina-symbol_rgb.cfg",
+		"/Z/tmp/resnet50/resnet50_old.cfg",
+		"/Z/tmp/retinaface_lwb_wk/mnet_v1_1_0_rgb.cfg",
+		"/Z/tmp/retinaface_lwb_wk/model/retina-symbol.prototxt",
+		"/Z/tmp/retinaface_lwb_wk/retina-symbol_yuv.cfg",
+		"/Z/work/work_task_facetest/test_Q4Server/code/Q4Server/CMakeLists.txt",
+		"/Z/work/work_task_facetest/test_Q4Server/test_hbcore/run.sh",
+		"/Z/work/work_task_facetest/test_Q4Server/test_hbfaceweb/generate_program.sh",
+		"/Z/work/work_task_facetest/test_Q4Server/test_hbcore/generate_program.sh",
+		"/Z/work/work_task_facetest/test_hbcore/code/hb_core/CMakeLists.txt",
+		"/Z/work/work_task_facetest/resnet50_project/code/src/main_entry.cpp",
+		"/Z/work/work_task_facetest/resnet50_project/code/CMakeLists.txt",
+		"/Z/work/work_task_facetest/resnet50_project/program/run.sh",
+		"/Z/svn/Q4Server/hb_core/hb_faceengine/CMakeLists.txt",
+		"/Z/eclipse-workspace/FaceEmbedd/nnie_retinaface/.gitignore",
+		"/Z/eclipse-workspace/FaceEmbedd/model/inst_retinaface_inst_myself_1088x1920_yvu.wk",
+		"/Z/eclipse-workspace/FaceEmbedd/nnie_retinaface/src/main_entry.cpp",
+		"/Z/work/work_task_facetest/resnet50_project/src/main_entry.cpp",
+		"/Z/tmp/retinaface_lwb_wk/mnet_v1_0_25_yuv.cfg",
+		"/Z/tmp/retinaface_lwb_wk/model/mnet_v1_0_25.prototxt",
+		"/Z/tmp/retinaface_lwb_wk/model/mnet_v1_1_0_dw.prototxt",
+		"/Z/tmp/retinaface_lwb_wk/model/mnet_v1_1_0.prototxt",
+		"/Z/work/work_task_facetest/resnet50_project/copy.sh",
+		"/Z/eclipse-workspace/FaceEmbedd/nnie_retinaface/common/sample_comm_svp.cpp",
+		"/Z/work/work_task_cmake/cmake-demo-master/Demo1/CMakeLists.txt",
+		"/Z/tmp/retinaface_lwb_wk/model/retina-symbol.caffemodel.debug",
+		"/Z/tmp/retinaface_lwb_wk/model/retina-symbol.prototxt.debug",
+		"/Z/tmp/retinaface_lwb_wk/mnet_v1_0_25_rgb.cfg",
+		"/Z/work/work_task_facetest/nnie_retinaface/src/project/nnie_retinaface/CMakeLists.txt",
+		"/Z/work/work_task_facetest/nnie_retinaface/run.sh",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/User/Projects/recent.json",
+		"/D/program_code/python/gluon-cv-master/gluoncv/data/pascal_voc/detection.py",
+		"/D/program_code/python/gluon-cv-master/scripts/detection/yolo/demo_pose.py",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/User/Projects/test debugger.sublime-project",
+		"/D/program_code/python/gluon-cv-master/scripts/detection/yolo/yolo3_darknet53_voc_best.params",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/User/Projects/python.sublime-project",
+		"/D/program_code/python/test/test.py",
+		"/D/program_code/python/pycv/chapter3/contours.py",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/Debugger/.no-sublime-package",
+		"/D/program_code/python/gluon-cv-master/scripts/deployment/cpp-inference/src/clipp.hpp",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/User/anacoda-py35.sublime-build",
+		"/D/program_code/python/pycv/first_edition/chapter2/miscellaneous/5-CameraWindow.py",
+		"/D/program_code/python/pose/test.py",
+		"/D/program_code/python/pose/416x416.bgr",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/Anaconda/Anaconda.sublime-settings",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/User/Anaconda.sublime-settings",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/User/Preferences.sublime-settings",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/Debugger/debugger.sublime-settings",
+		"/D/program_code/python/pycv/chapter3/canny.jpg",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/Anaconda/README.md",
+		"/D/记录.txt",
+		"/Z/test/HD900/HBRFaceEngineApi.h",
+		"/D/work/work_task_ai/huangzhe/demo_simple_pose.py",
+		"/D/program_code/python/gluon-cv-master/scripts/detection/yolo/train_yolo3.py",
+		"/C/Users/dell-pc/Downloads/log",
+		"/Y/program_code/gluon-cv/scripts/detection/yolo/demo_yolo.py",
+		"/D/program_code/python/gluon-cv-master/scripts/detection/yolo/demo_yolo.py",
+		"/D/work/work_task_ai/huangzhe/demo_yolo.py",
+		"/D/work/work_task_ai/huangzhe/detection.py",
+		"/C/Users/dell-pc/Downloads/未确认 561862.crdownload",
+		"/D/OneDrive/Desktop/YOLOV3.log",
+		"/D/software/trojan-cli/config.json",
+		"/D/OneDrive/文档/Tencent Files/446998841/FileRecv/session.log",
+		"/D/OneDrive/文档/Tencent Files/446998841/FileRecv/session(1).log",
+		"/D/OneDrive/文档/tencent files/446998841/FileRecv/demo_yolo.py",
+		"/D/OneDrive/文档/tencent files/446998841/FileRecv/demo_simple_pose.py",
+		"/D/OneDrive/文档/tencent files/446998841/FileRecv/detection.py",
+		"/D/OneDrive/Desktop/rtsp.py",
+		"/D/Program Files (x86)/Anaconda3/pkgs/conda-4.8.2-py36_0/Scripts/conda-script.py",
+		"/D/OneDrive/Desktop/session.log",
+		"/Z/tmp/retinaface_lwb_wk/mnet_v1_0_25_dw_yuv.cfg",
+		"/Z/tmp/retinaface_lwb_wk/retinaface_inst_rgb.cfg",
+		"/Z/tmp/retinaface_new_v1/retinaface_inst_rgb.cfg",
+		"/Z/tmp/retinaface_new_v1/retinaface_inst_yvu.cfg",
+		"/D/OneDrive/Desktop/mnet_v1_0_25_dw_plus.prototxt",
+		"/D/OneDrive/Desktop/mnet_v1_0_25_dw.prototxt"
+	],
+	"find":
+	{
+		"height": 22.0
+	},
+	"find_in_files":
+	{
+		"height": 102.0,
+		"where_history":
+		[
+			"Z:\\svn\\Q4Server"
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"VET_STUINFO_SIZE",
+			"unlock",
+			"_mutex_stuinfo_ext_",
+			"unlock",
+			")\n",
+			"stu_db",
+			"printf",
+			"isFileExist",
+			"m_pDetectVirAddr",
+			"MatConverToRgb",
+			"MallocMem",
+			"malloc",
+			"pool",
+			"red_stride8",
+			"/home/lwb/svn/",
+			" /home/lwb/svn/",
+			"EXECUTABLE_OUTPUT_PATH",
+			"out",
+			"/home/lwb/svn",
+			"Qt5Sql",
+			"Qt5Core",
+			"src",
+			"src_jpeg_filename",
+			"nnie_model_filename",
+			"src_dir_name",
+			"filesize",
+			"UNIT_TEST",
+			"release"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"../code/",
+			"../code"
+		],
+		"reverse": true,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "/Z/work/work_task_facetest/test_Q4Server/code/Q4Server/hb_core/hb_faceengine/3519a/HBRFaceEngineApi.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2250,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1317,
+								1317
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 234.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "/Z/work/work_task_facetest/test_Q4Server/code/Q4Server/hb_core/hb_faceengine/3519a/HBRFaceCachePool.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 9819,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								7056,
+								7056
+							]
+						],
+						"settings":
+						{
+							"spell_check": false,
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2633.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "/Z/work/work_task_facetest/nnie_retinaface/code/project/nnie_retinaface/CMakeLists.txt",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2735,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1166,
+								1166
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CMake/CMake.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 119.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "/Z/work/work_task_facetest/test_Q4Server/code/Q4Server/hb_core/hb_faceengine/3519a/HBRFaceNnieExt.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 22378,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								22378,
+								22378
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 8647.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "/Z/work/work_task_facetest/test_Q4Server/code/Q4Server/hb_core/hb_faceengine/3519a/HBRFaceEngineApi.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 10855,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								9459,
+								9459
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 4123.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 22.0
+	},
+	"input":
+	{
+		"height": 69.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": false,
+	"output.Debugger":
+	{
+		"height": 103.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "Anaconda Python Builder",
+	"project": "C++.sublime-project",
+	"replace":
+	{
+		"height": 40.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"hb_facew",
+				"test_Q4Server\\test_hbfaceweb\\Q4Terminal\\hb_faceweb"
+			],
+			[
+				"",
+				"nnie_retinaface\\code\\project\\common\\include\\base\\common.h"
+			],
+			[
+				"detection.py",
+				"gluon-cv-master\\gluoncv\\data\\pascal_voc\\detection.py"
+			],
+			[
+				"t",
+				"test\\test.py"
+			],
+			[
+				"te",
+				"test\\test.py"
+			],
+			[
+				"test",
+				"test\\test.py"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 448.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

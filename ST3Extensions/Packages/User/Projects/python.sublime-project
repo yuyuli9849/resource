@@ -1,0 +1,36 @@
+{
+	"build_systems":
+	[
+		{
+			"file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
+			"name": "Anaconda Python Builder",
+			"selector": "source.python",
+			"shell_cmd": "\"python\" -u \"$file\""
+		}
+	],
+	"folders":
+	[
+		{
+			"path": "D:\\program_code\\python"
+		},
+		{
+			"path": "C:\\Users\\dell-pc\\AppData\\Roaming\\Sublime Text 3\\Packages\\CTags"
+		}
+	],
+	"settings":
+	{
+		"debug.configurations":
+		[
+			{
+				"debugOptions":
+				{
+					"RedirectOutput": true
+				},
+				"name": "Python Debug",
+				"program": "C:\\Users\\dell-pc\\AppData\\Roaming\\Sublime Text 3\\Packages\\User\\Projects\\main.py",
+				"request": "launch",
+				"type": "python"
+			}
+		]
+	}
+}

@@ -1,0 +1,309 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "/D/记录.txt",
+			"settings":
+			{
+				"buffer_size": 1665,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"in",
+				"Package Control: Install Package"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			],
+			[
+				"",
+				"Install Package Control"
+			],
+			[
+				"install",
+				"Install Package Control"
+			],
+			[
+				"pack",
+				"Install Package Control"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 125.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/D/work/work_task_learn_mxnet/d2l-zh/environment.yml",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/Terminal/Default (Windows).sublime-keymap",
+		"/Z/tmp/retinaface_lwb_wk/mnet_v1_0_25_yuv - 副本.cfg",
+		"/Z/tmp/retinaface_lwb_wk/mnet_v1_0_25_rgb - 副本.cfg",
+		"/Z/tmp/retinaface_lwb_wk/resnet_18_mxnet_rgb.cfg",
+		"/Z/tmp/retinaface_lwb_wk/model/mnet_v1_1_0.prototxt",
+		"/Z/tmp/retinaface_lwb_wk/model/mnet_v1_1_0_dw.prototxt",
+		"/Z/tmp/retinaface_lwb_wk/mnet_v1_1_0_dw_yuv.cfg",
+		"/Z/tmp/retinaface_lwb_wk/mnet_v1_1_0_yuv.cfg",
+		"/Z/tmp/retinaface_lwb_wk/mnet_v1_1_0_rgb.cfg",
+		"/Z/tmp/retinaface_lwb_wk/mnet_v1_1_0_dw_rgb.cfg",
+		"/Z/tmp/retinaface_lwb_wk/model/mnet_v1_0_25.prototxt",
+		"/Z/tmp/retinaface_lwb_wk/model/mnet_v1_0_25_dw.prototxt",
+		"/D/记录.txt",
+		"/C/Users/dell-pc/AppData/Roaming/Sublime Text 3/Packages/User/Preferences.sublime-settings",
+		"/Z/test/HD900/HBRFaceEngineApi.h",
+		"/D/work/work_task_ai/huangzhe/demo_simple_pose.py",
+		"/D/program_code/python/gluon-cv-master/scripts/detection/yolo/train_yolo3.py",
+		"/C/Users/dell-pc/Downloads/log",
+		"/Y/program_code/gluon-cv/scripts/detection/yolo/demo_yolo.py",
+		"/D/program_code/python/gluon-cv-master/scripts/detection/yolo/demo_yolo.py",
+		"/D/work/work_task_ai/huangzhe/demo_yolo.py",
+		"/D/work/work_task_ai/huangzhe/detection.py",
+		"/C/Users/dell-pc/Downloads/未确认 561862.crdownload",
+		"/D/OneDrive/Desktop/YOLOV3.log",
+		"/D/software/trojan-cli/config.json",
+		"/D/OneDrive/文档/Tencent Files/446998841/FileRecv/session.log",
+		"/D/OneDrive/文档/Tencent Files/446998841/FileRecv/session(1).log",
+		"/D/OneDrive/文档/tencent files/446998841/FileRecv/demo_yolo.py",
+		"/D/OneDrive/文档/tencent files/446998841/FileRecv/demo_simple_pose.py",
+		"/D/OneDrive/文档/tencent files/446998841/FileRecv/detection.py",
+		"/D/OneDrive/Desktop/rtsp.py",
+		"/D/Program Files (x86)/Anaconda3/pkgs/conda-4.8.2-py36_0/Scripts/conda-script.py",
+		"/D/OneDrive/Desktop/session.log",
+		"/Z/tmp/retinaface_lwb_wk/mnet_v1_0_25_dw_yuv.cfg",
+		"/Z/tmp/retinaface_lwb_wk/mnet_v1_0_25_dw_rgb.cfg",
+		"/Z/tmp/retinaface_lwb_wk/model/r18_mxnet-symbol.prototxt",
+		"/Z/tmp/retinaface_lwb_wk/model/retina-symbol.prototxt.debug",
+		"/Z/tmp/retinaface_lwb_wk/retinaface_inst_rgb.cfg",
+		"/Z/tmp/retinaface_new_v1/retinaface_inst_rgb.cfg",
+		"/Z/tmp/retinaface_new_v1/retinaface_inst_yvu.cfg",
+		"/D/OneDrive/Desktop/mnet_v1_0_25_dw_plus.prototxt",
+		"/D/OneDrive/Desktop/mnet_v1_0_25_dw.prototxt",
+		"/Z/tmp/retinaface_lwb_wk/mnet_v1_0_25_dw.cfg",
+		"/Z/tmp/retinaface_new_v1/model/retina-symbol.prototxt",
+		"/Z/tmp/retinaface_lwb_wk/retinaface_inst_yvu.cfg",
+		"/Z/tmp/retinaface_lwb_wk/retinaface_inst_debug.cfg",
+		"/Z/tmp/retinaface/retinaface_inst_yvu.cfg",
+		"/Z/tmp/retinaface_new_v1/retinaface_inst_debug.cfg",
+		"/Z/tmp/retinaface/retinaface_inst_rgb.cfg",
+		"/Z/tmp/retinaface/model/retina-symbol.prototxt.debug",
+		"/Z/tmp/retinaface/model/retina-symbol.prototxt",
+		"/Z/tmp/retinaface_new_v1/model/r18_mxnet-symbol.prototxt",
+		"/Z/tmp/retinaface_new_v1/model/retina-symbol.prototxt.debug",
+		"/D/work/mnet_v1_0_25_dw.prototxt",
+		"/D/work/mnet_v1_1_0_dw.prototxt",
+		"/C/Users/dell-pc/AppData/Local/Temp/HBRFaceEngineApi.cpp-rev15947.svn000.tmp.cpp",
+		"/C/Users/dell-pc/AppData/Local/Temp/HBRFaceNnieExt.cpp-rev15842.svn000.tmp.cpp",
+		"/Z/eclipse-workspace/FaceEmbedd/setup/upg/updateRdo/rcS",
+		"/Z/HI3519_SDK/Hi3519AV100_SDK_V2.0.1.0/smp/a53_linux/mpp/sample/svp/nnie/sample_nnie_main.c",
+		"/Z/eclipse-workspace/FaceEmbedd/setup/upg/updateRdo/update.ini",
+		"/Z/eclipse-workspace/FaceEmbedd/setup/upg/updateRdo/run.sh",
+		"/D/OneDrive/Desktop/onekey_rebuild.sh",
+		"/Z/eclipse-workspace/FaceEmbedd/nnie_retinaface/src/main_entry.cpp",
+		"/Z/eclipse-workspace/FaceEmbedd/setup/upg/createImg.sh",
+		"/Z/eclipse-workspace/FaceEmbedd/setup_bak/upg/updateRdo/rcS",
+		"/Z/tmp/lwb_wk/model-0001.cfg",
+		"/Z/tmp/lwb_wk/insighface_resnet50_new_rgb.cfg",
+		"/Z/onekey/onekey_build.sh",
+		"/Z/onekey/onekey_rebuild.sh",
+		"/Z/svn/Q4Server/.gitignore"
+	],
+	"find":
+	{
+		"height": 22.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"mount",
+			"11023",
+			"transitions",
+			"1001",
+			"lwb",
+			"1001",
+			"/home/lwb/svn/"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"/home/zyyt/"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "/D/记录.txt",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1665,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								991,
+								991
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 897.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 22.0
+	},
+	"input":
+	{
+		"height": 42.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.Debugger":
+	{
+		"height": 242.0
+	},
+	"output.exec":
+	{
+		"height": 206.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "My_record.sublime-project",
+	"replace":
+	{
+		"height": 40.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 258.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
